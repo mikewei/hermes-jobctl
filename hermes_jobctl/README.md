@@ -106,4 +106,3 @@ hermes jobctl delete ./examples/sample-cron-task.md
 hermes jobctl delete --name my-job
 hermes jobctl new my-task --schedule "every 24h"
 ```
-
