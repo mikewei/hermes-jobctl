@@ -5,9 +5,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["hermes_jobctl"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"hermes_jobctl/plugin.yaml" = "plugin.yaml"
-
 [project]
 name = "hermes-jobctl"
 version = "0.1.1"
