@@ -33,3 +33,22 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--disable-plugin-autoload"
+
+[tool.bumpversion]
+commit = true
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "hermes_jobctl/plugin.yaml"
+search = 'version: "{current_version}"'
+replace = 'version: "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "## [unreleased]"
+replace = "## [{new_version}]"
