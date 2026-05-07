@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import sys
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -9,9 +10,35 @@ import click
 import typer
 from typer.core import TyperGroup
 
-from . import __version__
 from .commands import apply_paths, delete_targets, get_cmd, status_paths
 from .scaffold import run_new
+
+
+def _release_version() -> str:
+    try:
+        return version("hermes-jobctl")
+    except PackageNotFoundError:
+        pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+        if not pyproject.is_file():
+            raise SystemExit(
+                "hermes-jobctl: package is not installed and pyproject.toml was not found; "
+                "install the project (e.g. uv sync) or run from a source checkout."
+            ) from None
+        in_project = False
+        for line in pyproject.read_text(encoding="utf-8").splitlines():
+            s = line.strip()
+            if s == "[project]":
+                in_project = True
+                continue
+            if in_project:
+                if s.startswith("[") and s != "[project]":
+                    break
+                if s.startswith("version"):
+                    _, _, rhs = s.partition("=")
+                    val = rhs.strip().strip('"').strip("'")
+                    if val:
+                        return val
+        raise SystemExit("hermes-jobctl: could not read version from pyproject.toml [project] table.") from None
 
 
 class HermesTaskGroup(TyperGroup):
@@ -211,7 +238,7 @@ def new(
 
 def main() -> None:
     if len(sys.argv) >= 2 and sys.argv[1] in ("--version", "-V"):
-        print(f"hermes-jobctl {__version__}")
+        print(f"hermes-jobctl {_release_version()}")
         raise SystemExit(0)
     app()
 
