@@ -57,10 +57,10 @@ pip install -e '.[dev]'   # editable + dev deps
 Install this plugin from Hermes registry:
 
 ```bash
-hermes plugins install mikewei/hermes-jobctl
+hermes plugins install mikewei/hermes-plugin-jobctl
 ```
 
-Or copy the repo directory to ~/.hermes/plugins manually and enable it.
+Or copy the `hermes_jobctl` directory to `~/.hermes/plugins` manually and enable it.
 
 ---
 
