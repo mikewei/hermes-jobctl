@@ -13,8 +13,16 @@ Declarative Hermes cron jobs from Markdown files: YAML **front matter** for meta
 
 ### From PyPI
 
+With pip:
+
 ```bash
 pip install hermes-jobctl
+```
+
+or with uv:
+
+```
+uv tool install hermes-jobctl
 ```
 
 ### From source
