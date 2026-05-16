@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+remote_name="${1:-}"
+
+if [ "$remote_name" != "origin" ]; then
+  exit 0
+fi
+
+if git diff --quiet HEAD@{upstream}...HEAD -- hermes_jobctl 2>/dev/null; then
+  exit 0
+fi
+
+echo "[pre-push] syncing hermes_jobctl subtree..."
+
+git subtree push \
+  --prefix=hermes_jobctl \
+  git@github.com:mikewei/hermes-plugin-jobctl.git \
+  main
