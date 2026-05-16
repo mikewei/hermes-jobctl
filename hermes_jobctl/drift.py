@@ -78,6 +78,37 @@ def job_is_paused(job: dict[str, Any]) -> bool:
 
 
 @dataclass(frozen=True)
+class JobSpecFields:
+    """Normalized job fields for writing a task spec markdown file."""
+
+    job_name: str
+    schedule: str
+    prompt: str
+    deliver: str | None
+    repeat: int | None
+    skills: tuple[str, ...]
+    script: str | None
+    workdir: str | None
+    suspend: bool
+
+
+def job_fields_for_spec(job: dict[str, Any]) -> JobSpecFields:
+    """Extract spec-relevant fields from a jobs.json entry."""
+    job_name = str(job.get("name") or "").strip()
+    return JobSpecFields(
+        job_name=job_name,
+        schedule=_schedule_display(job),
+        prompt=str(job.get("prompt") or "").strip(),
+        deliver=_normalize_deliver(job),
+        repeat=_repeat_times(job),
+        skills=_normalize_skills(job),
+        script=_normalize_script_workdir(job, "script"),
+        workdir=_normalize_script_workdir(job, "workdir"),
+        suspend=job_is_paused(job),
+    )
+
+
+@dataclass(frozen=True)
 class DesiredState:
     schedule: str
     prompt: str

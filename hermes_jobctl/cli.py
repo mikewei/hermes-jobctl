@@ -203,8 +203,16 @@ def get_jobs(
 @app.command()
 def new(
     task_name: Annotated[
-        str, typer.Argument(help="Base name for <name>.md (suffix .md allowed).")
-    ],
+        Optional[str],
+        typer.Argument(
+            help="Base name for <name>.md (suffix .md allowed). Optional with --from-job.",
+        ),
+    ] = None,
+    from_job: Optional[str] = typer.Option(
+        None,
+        "--from-job",
+        help="Export spec from an existing Hermes cron job id (jobs.json).",
+    ),
     directory: Optional[Path] = typer.Option(
         None,
         "--dir",
@@ -216,17 +224,24 @@ def new(
         "-o",
         help="Output file path. Mutually exclusive with --dir.",
     ),
-    schedule: str = typer.Option(
-        "every 24h",
+    schedule: Optional[str] = typer.Option(
+        None,
         "--schedule",
-        help="Initial schedule string in the template.",
+        help="Initial schedule for blank template (default: every 24h). Not used with --from-job.",
     ),
     force: bool = typer.Option(False, "--force", help="Overwrite if the file exists."),
     stdout_flag: bool = typer.Option(False, "--stdout", help="Print template to stdout; do not write a file."),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p"),
+    hermes_bin: Optional[str] = typer.Option(None, "--hermes-bin", envvar="HERMES_JOBCTL_HERMES_BIN"),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
 ):
     """Scaffold a task spec with all supported YAML keys (optional ones commented out)."""
     code = run_new(
         task_name,
+        from_job_id=from_job,
+        profile_opt=profile,
+        hermes_bin=hermes_bin,
+        verbose=verbose,
         directory=directory,
         output=output,
         schedule=schedule,

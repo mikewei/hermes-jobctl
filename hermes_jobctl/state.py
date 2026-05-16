@@ -31,6 +31,14 @@ def find_jobs_by_name(jobs: list[dict[str, Any]], name: str) -> list[dict[str, A
     return [j for j in jobs if isinstance(j, dict) and str(j.get("name", "")) == name]
 
 
+def find_job_by_id(jobs: list[dict[str, Any]], job_id: str) -> dict[str, Any] | None:
+    needle = job_id.strip()
+    for j in jobs:
+        if isinstance(j, dict) and str(j.get("id", "")).strip() == needle:
+            return j
+    return None
+
+
 def singleton_job_or_error(jobs: list[dict[str, Any]], name: str) -> tuple[dict[str, Any] | None, str | None]:
     """
     Returns (job, error_message). If multiple matches, error_message is set.

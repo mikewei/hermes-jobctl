@@ -106,12 +106,23 @@ def setup_argparse(subparser: argparse.ArgumentParser) -> None:
     _add_common_flags(p_get)
 
     p_new = subs.add_parser("new", help="Scaffold a task spec markdown file")
-    p_new.add_argument("task_name", help="Base name for <task>.md (suffix .md allowed)")
+    p_new.add_argument(
+        "task_name",
+        nargs="?",
+        default=None,
+        help="Base name for <task>.md (suffix .md allowed; optional with --from-job)",
+    )
+    p_new.add_argument("--from-job", dest="from_job_id", default=None, help="Export from existing job id")
     p_new.add_argument("--dir", dest="directory", type=Path, default=None, help="Output directory (default cwd)")
     p_new.add_argument("-o", "--output", type=Path, default=None, help="Output file path")
-    p_new.add_argument("--schedule", default="every 24h", help="Initial schedule string in the template")
+    p_new.add_argument(
+        "--schedule",
+        default=None,
+        help="Initial schedule for blank template (default every 24h; not used with --from-job)",
+    )
     p_new.add_argument("--force", action="store_true", help="Overwrite if the file exists")
     p_new.add_argument("--stdout", dest="stdout_flag", action="store_true", help="Print template; do not write")
+    _add_common_flags(p_new)
 
     subparser.set_defaults(func=handle_cli)
 
@@ -126,6 +137,10 @@ def handle_cli(args: argparse.Namespace) -> int:
     if sub == "new":
         return run_new(
             args.task_name,
+            from_job_id=getattr(args, "from_job_id", None),
+            profile_opt=_resolve_profile(getattr(args, "profile", None)),
+            hermes_bin=getattr(args, "hermes_bin", None),
+            verbose=bool(getattr(args, "verbose", False)),
             directory=args.directory,
             output=args.output,
             schedule=args.schedule,

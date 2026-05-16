@@ -95,7 +95,7 @@ Example scheduled task for Hermes cron. Copy and edit as needed.
 | `delete PATHS…` \| `delete --name NAME` | Remove a job by spec path(s) or by job name. |
 | `status PATHS…` | Compare specs to `jobs.json` (sync / pending_apply / missing, etc.). |
 | `get` | List jobs in `jobs.json` (optional `--name`, `--json`). |
-| `new TASK` | Scaffold a starter spec (`--schedule`, `--dir` / `-o/--output`, `--stdout`, `--force`). |
+| `new [TASK]` | Scaffold a spec: blank template (`--schedule`, default `every 24h`) or export from an existing job (`--from-job <id>`). Optional `TASK` with `--from-job` (defaults to job name). Also `--dir` / `-o/--output`, `--stdout`, `--force`. |
 
 Common flags: `-p/--profile`, `--hermes-bin`, `-v/--verbose`; `apply` / `delete` also support `--accept-hooks`.
 
@@ -105,4 +105,7 @@ hermes jobctl status ./examples/
 hermes jobctl delete ./examples/sample-cron-task.md
 hermes jobctl delete --name my-job
 hermes jobctl new my-task --schedule "every 24h"
+hermes jobctl get -v
+hermes jobctl new --from-job abc123
+hermes jobctl new my-copy --from-job abc123 -o ./tasks/my-copy.md
 ```
